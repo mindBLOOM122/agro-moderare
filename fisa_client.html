@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8" />
+    <title>Fișa Clientului - AgroTrading</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background: #f5f7f9;
+            color: #1c1c1c;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px 40px 40px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('{{ url_for("static", filename="agro.logo.png") }}');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 70%;
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .fixed-logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 150px;
+            height: auto;
+            z-index: 1000;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2b5d34;
+            margin-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            border-bottom: 2px solid #d3e4d0;
+            padding-bottom: 5px;
+            color: #2b5d34;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 4px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        .checkbox-list .checkbox-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            accent-color: #2b5d34;
+        }
+
+        .checkbox-inline {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .checkbox-inline span {
+            margin-right: 10px;
+        }
+
+        .checkbox-inline input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2b5d34;
+        }
+
+        button {
+            background: #2b5d34;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: auto;
+        }
+
+        .top-quote {
+            position: fixed;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: "Georgia", serif;
+            font-style: italic;
+            font-size: 14px;
+            color: rgba(43, 93, 52, 0.3);
+            z-index: 9999;
+            max-width: 90%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .status-display {
+            display: none;
+        }
+
+        .status-admis {
+            color: green;
+        }
+
+        .status-respins {
+            color: red;
+        }
+
+        .status-asteptare {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-quote">Ceea ce este clar.devine simplu, ceea ce este simplu funcționează</div>
+
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo AgroTrading" class="fixed-logo">
+
+    <div class="container">
+        <h1>Fișa Clientului - AgroTrading</h1>
+
+        <form action="{{ form_action }}" method="post" enctype="multipart/form-data">
+            <div class="section">
+                <h2>Informații Client</h2>
+                <label>Cod Client
+                    <input type="text" name="cod_client" value="{{ client.cod_client }}">
+                </label>
+                <label>CIF
+                    <input type="text" name="cif" value="{{ client.cif }}">
+                </label>
+                <label>Nume Companie
+                    <input type="text" name="nume_companie" value="{{ client.nume_companie }}">
+                </label>
+                <label>Reprezentant Legal
+                    <input type="text" name="reprezentant" value="{{ client.reprezentant }}">
+                </label>
+                <label>Data Moderare
+                    <input type="date" name="data_moderare" value="{{ client.data_moderare }}">
+                </label>
+                <label>Email
+                    <input type="email" name="email" value="{{ client.email }}">
+                </label>
+                <label>Telefon
+                    <input type="text" name="telefon" value="{{ client.telefon }}">
+                </label>
+                <label>Tip Client
+                    <select name="tip_client">
+                        <option value="Companie" {% if client.tip_client == "Companie" %}selected{% endif %}>Companie</option>
+                        <option value="ONG" {% if client.tip_client == "ONG" %}selected{% endif %}>ONG</option>
+                    </select>
+                </label>
+                <label>Status
+                    <select name="status" id="statusSelect" onchange="updateStatusDisplay()">
+                        <option value="În Așteptare" {% if client.status == "În Așteptare" %}selected{% endif %}>În Așteptare</option>
+                        <option value="Aprobat" {% if client.status == "Aprobat" %}selected{% endif %}>Aprobat</option>
+                        <option value="Respins" {% if client.status == "Respins" %}selected{% endif %}>Respins</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="section">
+                <h2>Verificări Realizate</h2>
+                <div class="checkbox-inline">
+                    <span>Baze de date legale</span>
+                    <input type="checkbox" name="verificare_baza_legala" {% if client.verificare_baza_legala %}checked{% endif %}>
+                </div>
+                <textarea name="verificari_text" rows="4" placeholder="Scrie aici verificările realizate...">{{ client.verificari_text }}</textarea>
+            </div>
+
+            <div class="section">
+                <h2>Documente De Societate</h2>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="documente" value="Extras de cont" {% if 'Extras de cont' in client.documente %}checked{% endif %}>
+                        Extras de cont
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="documente" value="Certificat de înregistrare" {% if 'Certificat de înregistrare' in client.documente %}checked{% endif %}>
+                        Certificat de înregistrare
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="documente" value="Act constitutiv" {% if 'Act constitutiv' in client.documente %}checked{% endif %}>
+                        Act constitutiv
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="documente" value="Certificat TVA" {% if 'Certificat TVA' in client.documente %}checked{% endif %}>
+                        Certificat TVA
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Observații Moderator</h2>
+                <textarea name="observatii" rows="4">{{ client.observatii }}</textarea>
+            </div>
+
+            <div class="section">
+                <h2>Moderator</h2>
+                <input type="text" name="moderator" value="{{ client.moderator }}">
+            </div>
+
+            <button type="submit">📄 Generează Fișă PDF</button>
+        </form>
+    </div>
+
+    <script>
+        function updateStatusDisplay() {
+            // Funcție păstrată pentru compatibilitate, dar statusul nu este afișat sus.
+        }
+        window.addEventListener("DOMContentLoaded", updateStatusDisplay);
+    </script>
+</body>
+</html>

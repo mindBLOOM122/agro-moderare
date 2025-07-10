@@ -1,0 +1,4 @@
+Flask
+pdfkit
+jinja2
+MarkupSafe

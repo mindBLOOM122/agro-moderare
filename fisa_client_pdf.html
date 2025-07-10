@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Fișă Client</title>
+    <meta name="pdf-filename" content="{{ client.nume_companie }} - {{ client.cif }}.pdf">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 2cm;
+            color: #333;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 18pt;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-height: 80px;
+        }
+
+        .status-section {
+            text-align: center;
+            margin: 10px 0 20px;
+        }
+
+        .status-label {
+            display: inline-block;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            font-size: 16pt;
+            border: 2px solid #999;
+        }
+
+        /* Culoare pentru fiecare status */
+        .status-Admis, .status-Aprobat {
+            background-color: #28a745;
+            color: #ffffff;
+            border-color: #1e7e34;
+        }
+
+        .status-Respins {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .status-ÎnAșteptare {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            margin-top: 50px;
+        }
+
+        th, td {
+            text-align: left;
+            vertical-align: top;
+            padding: 8px;
+            border: 1px solid #ccc;
+            word-wrap: break-word;
+        }
+
+        .section-title {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            padding: 6px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .green-text {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .red-text {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        p, li {
+            word-break: break-word;
+        }
+
+        pre, .multiline-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+        }
+
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">
+    <img src="{{ logo_path }}" alt="Logo">
+</div>
+
+<h1>Fișă Client</h1>
+
+<!-- STATUS CU CULOARE -->
+<div class="status-section">
+    <span class="status-label status-{{ client.status|replace(" ", "") }}">{{ client.status }}</span>
+</div>
+
+<!-- INFORMATII CLIENT -->
+<table>
+    <tr>
+        <th>CIF</th>
+        <td>{{ client.cif }}</td>
+    </tr>
+    <tr>
+        <th>Nume Companie</th>
+        <td>{{ client.nume_companie }}</td>
+    </tr>
+    <tr>
+        <th>Reprezentant</th>
+        <td>{{ client.reprezentant }}</td>
+    </tr>
+    <tr>
+        <th>Data Moderare</th>
+        <td>{{ client.data_moderare }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ client.email }}</td>
+    </tr>
+    <tr>
+        <th>Telefon</th>
+        <td>{{ client.telefon }}</td>
+    </tr>
+    <tr>
+        <th>Tip Client</th>
+        <td>{{ client.tip_client }}</td>
+    </tr>
+    <tr>
+        <th>Moderator</th>
+        <td>{{ client.moderator }}</td>
+    </tr>
+</table>
+
+<!-- DOCUMENTE -->
+<div class="section-title">Documente</div>
+{% if client.documente %}
+    <ul>
+        {% for doc in client.documente %}
+        <li>{{ doc }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p><em>Nu au fost selectate documente.</em></p>
+{% endif %}
+
+<!-- VERIFICARI -->
+<div class="section-title">Verificări</div>
+<p class="multiline-text">{{ client.verificari_text | nl2br }}</p>
+
+<!-- OBSERVATII -->
+<div class="section-title">Observații</div>
+<p class="multiline-text">{{ client.observatii | nl2br }}</p>
+
+<!-- BAZA LEGALA -->
+<div class="section-title">Verificare Bază Legală</div>
+<p>
+    {% if client.verificare_baza_legala %}
+        <span style="font-weight: bold; color: #28a745; margin-right: 6px;">•</span>
+        <span class="green-text">Bazele de date legale sunt verificate</span>
+    {% else %}
+        <span style="font-weight: bold; color: #dc3545; margin-right: 6px;">•</span>
+        <span class="red-text">Bazele de date nu au fost verificate</span>
+    {% endif %}
+</p>
+
+</body>
+</html>
